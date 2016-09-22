@@ -2,23 +2,15 @@
 
 // Module dependencies.
 var app = require('../app');
-var debug = require('debug')('nova:server');
-var https = require('https');
-var fs = require('fs');
-
-var options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
-};
+var http = require('http');
 
 // Get port from environment and store in Express.
 var port = process.env.PORT || '8080';
 app.set('port', port);
-app.enable('trust proxy');
 
-// Create HTTPS server.
-var server = https.createServer(options, app);
+// Create HTTP server.
+var server = http.createServer(app);
 
 // Listen on provided port, on all network interfaces.
 server.listen(port);
-console.log('HTTPS Server started on port ' + port);
+console.log('HTTP Server started on port ' + port);
