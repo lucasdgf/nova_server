@@ -95,7 +95,7 @@ function processRequest(req, res, next) {
     });
 }
 
-// Export functionsqu
+// Export functions
 module.exports = {
   getAllRequests: getAllRequests,
   getAllResponses: getAllResponses,
