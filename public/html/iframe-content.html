@@ -46,24 +46,28 @@
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script>
+  // Callback for after Google signin
   function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
+    // Fill form with Google user data
     $("input[name='name']").val(profile.getName());
     $("input[name='email']").val(profile.getEmail());
     $('.g-signin2').hide();
     $("#nova-form").fadeIn();
   }
 
+  // After application is complete, hide form and show Nova message
   function showResult(message) {
     $('#nova-form').fadeOut('slow', function() {
       $('#helper-message').html(message);
     });
   }
 
+  // Make call to Nova servers to process user application
   function processForm(event){
+    // Lender-specific API key. The call will only work if the API key exists
     var api_key = 'bmK56CFGfLno8TUn6wV1RGykEpW4';
     var form_data = $(this).serialize() + '&api_key=' + api_key;
-
     $('#submit-button').html('Loading...');
     $.ajax({
       url: '/api/submit',
@@ -73,11 +77,13 @@
       data: form_data,
         success: function(data, textStatus, jQxhr){
           setTimeout(function() {
+            // Communicate application result to lender's DOM
             parent.postMessage(data['status'], 'https://nova-lender-server.herokuapp.com');
             showResult(data['message']);
           }, 1000);
         },
         error: function(jqXhr, textStatus, errorThrown){
+          // Server error fallback
           var submitButton = $('#nova-form button');
           submitButton.addClass('btn-info');
           submitButton.html('Server Error. Please try')

@@ -16,5 +16,8 @@
     "morgan": "~1.6.1",
     "pg-promise": "^3.2.3",
     "serve-favicon": "~2.3.0"
+  },
+  "devDependencies": {
+    "supertest": "^2.0.0"
   }
 }

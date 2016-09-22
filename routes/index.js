@@ -4,7 +4,7 @@ var router = express.Router();
 
 var db = require('../queries');
 
-/* GET iFrame HTML. */
+// Serve Nova widget for testing
 router.get('/api/widget', function(req, res, next) {
   fs.readFile('public/html/iframe-content.html', "binary", function(err, file) {
     if(err) {        
@@ -19,16 +19,16 @@ router.get('/api/widget', function(req, res, next) {
   });
 });
 
-/* Process request */
+// Process application request
 router.post('/api/submit', db.processRequest);
 
-/* Get all requests */
+// Get all application requests
 router.get('/api/requests', db.getAllRequests);
 
-/* Get all responses */
+// Get all application responses
 router.get('/api/responses', db.getAllResponses);
 
-/* Get all clients */
+// Get all Nova clients (lenders)
 router.get('/api/clients', db.getAllClients);
 
 module.exports = router;
