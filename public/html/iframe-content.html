@@ -66,14 +66,14 @@
 
     $('#submit-button').html('Loading...');
     $.ajax({
-      url: 'https://localhost:3000/api/submit',
+      url: 'https://nova-credit-server.herokuapp.com/api/submit',
       dataType: 'text json',
       type: 'post',
       contentType: 'application/x-www-form-urlencoded',
       data: form_data,
         success: function(data, textStatus, jQxhr){
           setTimeout(function() {
-            parent.postMessage(data['status'], 'https://localhost:4000');
+            parent.postMessage(data['status'], 'https://nova-lender-server.herokuapp.com');
             showResult(data['message']);
           }, 1000);
         },
