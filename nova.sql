@@ -21,7 +21,7 @@ CREATE TABLE responses (
 CREATE TABLE clients (
   id SERIAL PRIMARY KEY,
   name VARCHAR,
-  api_key VARCHAR
+  api_key VARCHAR UNIQUE
 );
 
 INSERT INTO clients (name, api_key) VALUES ('Wells Fargo', 'bmK56CFGfLno8TUn6wV1RGykEpW4');
