@@ -1,23 +1,10 @@
 var express = require('express');
-var fs = require("fs")
 var router = express.Router();
 
 var db = require('../queries');
 
-// Serve Nova widget for testing
-router.get('/api/widget', function(req, res, next) {
-  fs.readFile('public/html/iframe-content.html', "binary", function(err, file) {
-    if(err) {        
-      res.writeHead(500, {"Content-Type": "text/plain"});
-      res.write(err + "\n");
-      res.end();
-      return;
-    }
-    res.writeHead(200);
-    res.write(file, "binary");
-    res.end();
-  });
-});
+// Serve Nova widget
+router.get('/api/widget', db.validateWidget);
 
 // Process application request
 router.post('/api/submit', db.processRequest);

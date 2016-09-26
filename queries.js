@@ -10,57 +10,62 @@ var connectionString = 'postgres://lsoocztuvlyeym:JvRePL5xVLGQ46P2GKprVO1KHQ'
   + '@ec2-54-243-202-110.compute-1.amazonaws.com:5432/dcaktg7ij2eq5g?ssl=true';
 var db = pgp(connectionString);
 
-// Query database for all logged requests
-function getAllRequests(req, res, next) {
-  db.any('select * from requests')
+
+function validateWidget(req, res, next) {
+  // Check for API key as URL parameter
+  if (!req.query.hasOwnProperty('api_key')) {
+    var err = new Error('Missing API key');
+    err.status = 403;
+    next(err);
+  }
+  else {
+    // Verify if API key is valid
+    db.one('select * from clients where api_key = $1', req.query.api_key)
+      .then(function (data) {
+        res.render('widget', {api_key: req.query.api_key});
+      })
+      .catch(function (err) {
+        var err = new Error('Invalid API key');
+        err.status = 403;
+        next(err);
+      });
+  }
+}
+
+// Gets all entries from a given table
+function getAll(table, res) {
+  db.any('select * from ' + table)
     .then(function (data) {
       res.status(200)
         .json({
           status: 'success',
           data: data,
-          message: 'Retrieved all requests'
+          message: 'Retrieved all ' + table
         });
     })
     .catch(function (err) {
       return next(err);
     });
+}
+
+// Query database for all logged requests
+function getAllRequests(req, res, next) {
+  getAll('requests', res);
 }
 
 // Query database for all logged responses
 function getAllResponses(req, res, next) {
-  db.any('select * from responses')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved all responses'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+  getAll('responses', res);
 }
 
 // Query database for all Nova clients (lenders)
 function getAllClients(req, res, next) {
-  db.any('select * from clients')
-    .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved all clients'
-        });
-    })
-    .catch(function (err) {
-      return next(err);
-    });
+  getAll('clients', res);
 }
 
 // Process application request
 function processRequest(req, res, next) {
-  // Verify if API key is valid
+  // Fetch lender ID
   db.one('select * from clients where api_key = $1', req.body.api_key)
     .then(function (data) {
       req.body.lender_id = data.id;
@@ -97,6 +102,7 @@ function processRequest(req, res, next) {
 
 // Export functions
 module.exports = {
+  validateWidget: validateWidget,
   getAllRequests: getAllRequests,
   getAllResponses: getAllResponses,
   getAllClients: getAllClients,

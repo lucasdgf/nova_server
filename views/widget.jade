@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  h2 Wells Fargo
+  p#helper-message Apply for credit verification via Nova Credit
+  div.g-signin2(data-onsuccess='onSignIn')
+  form#nova-form(data-toggle='validator' method='post' role='form')
+    input(name='api_key' value='#{api_key}' hidden readonly)
+    select.form-control(name='country')
+      option Canada
+      option India
+      option Mexico
+    input(type='text' name='name' placeholder='Full Name' class='form-control' readonly required)
+    input(type='email' name='email' placeholder='Email' class='form-control' readonly required)
+    input(type='text' name='passport' placeholder='Passport Number' class='form-control' required)
+    button(type='submit' class='btn btn-large btn-primary' id='submit-button') Apply Now
+
+  script(src='https://apis.google.com/js/platform.js' async defer)
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
+  script(src='/javascripts/main.js')

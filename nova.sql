@@ -25,3 +25,4 @@ CREATE TABLE clients (
 );
 
 INSERT INTO clients (name, api_key) VALUES ('Wells Fargo', 'bmK56CFGfLno8TUn6wV1RGykEpW4');
+INSERT INTO clients (name, api_key) VALUES ('Nova Test', 'nova_test');

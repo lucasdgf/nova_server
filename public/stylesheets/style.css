@@ -1,4 +1,20 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.jumbotron {
+  margin: 40px auto;
+  max-width: 600px;
+}
+
+.abcRioButton {
+  margin: 0 auto;
+}
+
+#nova-form {
+  display: none;
+}
+
+.form-control {
+  margin: 6px 0;
 }

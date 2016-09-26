@@ -20,123 +20,112 @@ describe('Nova API Testing', function () {
     httpServer.close();
   });
 
-  // Test GET /api/widget endpoint
-  it('responds to /api/widget', function testWidget(done) {
-    iframeFile = fs.readFileSync('public/html/iframe-content.html', "binary");
-    request(server)
-      .get('/api/widget')
-      .expect(200)
-      .end(function(err, res) {
-        assert(res.text == iframeFile);
+  // GET /api/widget endpoint
+  describe('GET /api/wiget endpoint', function() {
+    // 403 when missing API key
+    it('responds with 403 when missing API key', function testWidget(done) {
+      request(server)
+        .get('/api/widget')
+        .expect(403, done);
+    });
+
+    // 403 when invalid API key
+    it('responds with 403 when invalid API key', function testWidget(done) {
+      request(server)
+        .get('/api/widget/?api_key=invalid')
+        .expect(403, done);
+    });
+
+    // 200 when valid API key
+    it('responds with 200 when valid API key', function testWidget(done) {
+      request(server)
+        .get('/api/widget/?api_key=nova_test')
+        .expect(200, done);
+    });
+  });
+
+  function testGetAllEndpoint(table) {
+    describe('GET /api/' + table + ' endpoint', function() {
+      it('responds with 200 and valid message', function testRequest(done) {
+        request(server)
+          .get('/api/' + table)
+          .expect(200)
+          .expect('Content-Type', /json/)
+          .end(function(err, res) {
+            if (err) done(err);
+            res.body.hasOwnProperty('status');
+            res.body.hasOwnProperty('data');
+            res.body.hasOwnProperty('message');
+            done();
+          });
       });
-      done();
+    });
+  }
+
+  // GET /api/requests endpoint
+  testGetAllEndpoint('requests');
+
+  // GET /api/responses endpoint
+  testGetAllEndpoint('responses');
+
+  // GET /api/clients endpoint
+  testGetAllEndpoint('clients');
+
+  // POST /api/submit endpoint
+  describe('POST /api/submit endpoint', function() {
+    // 500 on invalid API key
+    it('responds with 500 on invalid API key', function
+      testInvalidSubmitRequest(done) {
+      request(server)
+        .post('/api/submit')
+        .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'US',
+          'passport': '1234', 'api_key': 'nova'})
+        .expect(500, done);
+    });
+
+    // 200 on valid API key, accept application for Mexico
+    it('responds with 200 and accepts valid applications from Mexico',
+      function testValidSubmitRequest(done) {
+      request(server)
+        .post('/api/submit')
+        .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'Mexico',
+          'passport': '1234', 'api_key': 'nova_test'})
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) done(err);
+          content = JSON.parse(res.text);
+          assert(content.status == true);
+          assert(content.message == 'You\'ve been approved!');
+          done();
+        });
+    });
+
+    // Test application to be denied
+    it('responds with 200 and denies valid applications from other countries',
+      function testValidSubmitRequest(done) {
+      request(server)
+        .post('/api/submit')
+        .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'India',
+          'passport': '1234', 'api_key': 'nova_test'})
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          if (err) done(err);
+          content = JSON.parse(res.text);
+          assert(content.status == false);
+          assert(content.message == 'We\'re sorry to inform that you\'ve been denied');
+          done();
+        });
+    });
   });
 
-  // Test GET /api/requests endpoint
-  it('responds to /api/requests', function testRequests(done) {
-    request(server)
-      .get('/api/requests')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) done(err);
-        res.body.hasOwnProperty('status');
-        res.body.hasOwnProperty('data');
-        res.body.hasOwnProperty('message');
-        done();
-      });
-  });
-
-  // Test GET /api/responses endpoint
-  it('responds to /api/responses', function testResponses(done) {
-    request(server)
-      .get('/api/responses')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) done(err);
-        res.body.hasOwnProperty('status');
-        res.body.hasOwnProperty('data');
-        res.body.hasOwnProperty('message');
-        done();
-      });
-  });
-
-  // Test GET /api/clients endpoint
-  it('responds to /api/clients', function testClients(done) {
-    request(server)
-      .get('/api/clients')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) done(err);
-        res.body.hasOwnProperty('status');
-        res.body.hasOwnProperty('data');
-        res.body.hasOwnProperty('message');
-        done();
-      });
-  });
-
-  // Test GET /api/widget endpoint
-  it('404 everything else', function test404(done) {
-    request(server)
-      .get('/foo/bar')
-      .expect(404, done);
-  });
-
-  // Test valid and successful POST /api/submit request
-  it('responds to /api/submit on valid API key', function testValidSubmitRequest(done) {
-    request(server)
-      .post('/api/submit')
-      .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'US', 'passport': '1234', 'api_key': 'bmK56CFGfLno8TUn6wV1RGykEpW4'})
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) done(err);
-        content = JSON.parse(res.text);
-        assert(content.hasOwnProperty('message'));
-        assert(content.hasOwnProperty('status'));
-        done();
-      });
-  });
-
-  // Test invalid POST /api/submit request
-  it('responds to /api/submit with 500 on invalid API key', function testInvalidSubmitRequest(done) {
-    request(server)
-      .post('/api/submit')
-      .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'US', 'passport': '1234', 'api_key': 'nova'})
-      .expect(500, done);
-  });
-
-  // Test application to be accepted
-  it('accepts applications from Mexico', function testValidSubmitRequest(done) {
-    request(server)
-      .post('/api/submit')
-      .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'Mexico', 'passport': '1234', 'api_key': 'bmK56CFGfLno8TUn6wV1RGykEpW4'})
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) done(err);
-        content = JSON.parse(res.text);
-        assert(content.status == true);
-        assert(content.message == 'You\'ve been approved!');
-        done();
-      });
-  });
-
-  // Test application to be denied
-  it('denies applications from other countries', function testValidSubmitRequest(done) {
-    request(server)
-      .post('/api/submit')
-      .send({'name': 'Nova', 'email': 'nova@nova.com', 'country': 'India', 'passport': '1234', 'api_key': 'bmK56CFGfLno8TUn6wV1RGykEpW4'})
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) done(err);
-        content = JSON.parse(res.text);
-        assert(content.status == false);
-        assert(content.message == 'We\'re sorry to inform that you\'ve been denied');
-        done();
-      });
+  // Test GET inexistent endpoint
+  describe('GET inexistent endpoint', function() {
+    it('responds with 404', function test404(done) {
+      request(server)
+        .get('/foo/bar')
+        .expect(404, done);
+    });
   });
 });
