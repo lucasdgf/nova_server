@@ -1,6 +1,7 @@
 # Local files
 .DS_Store
 .env
+nova.sql
 
 # Dependency directories
 node_modules

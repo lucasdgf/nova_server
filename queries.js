@@ -22,6 +22,12 @@ function validateWidget(req, res, next) {
     // Verify if API key is valid
     db.one('select * from clients where api_key = $1', req.query.api_key)
       .then(function (data) {
+        var domains = JSON.parse(data.domains);
+        if (domains.indexOf(req.headers.referer) < 0) {
+          var err = new Error('Invalid requester domain');
+          err.status = 403;
+          next(err);
+        }
         res.render('widget', {api_key: req.query.api_key});
       })
       .catch(function (err) {

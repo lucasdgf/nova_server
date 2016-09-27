@@ -20,9 +20,10 @@ CREATE TABLE responses (
 
 CREATE TABLE clients (
   id SERIAL PRIMARY KEY,
+  domains VARCHAR,
   name VARCHAR,
   api_key VARCHAR UNIQUE
 );
 
-INSERT INTO clients (name, api_key) VALUES ('Wells Fargo', 'bmK56CFGfLno8TUn6wV1RGykEpW4');
-INSERT INTO clients (name, api_key) VALUES ('Nova Test', 'nova_test');
+INSERT INTO clients (name, domains, api_key) VALUES('Wells Fargo', '["http://nova-lender-server.herokuapp.com/","https://nova-lender-server.herokuapp.com/","http://localhost:3000/","https://localhost:3000/"]', 'bmK56CFGfLno8TUn6wV1RGykEpW4');
+INSERT INTO clients (name, domains, api_key) VALUES ('Nova Test', '["http://nova.com"]', 'nova_test');
