@@ -3,9 +3,6 @@
   "description": "Nova server to serve API requests from lenders",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
-  },
   "dependencies": {
     "bluebird": "^3.3.4",
     "body-parser": "~1.13.2",
@@ -13,11 +10,21 @@
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "jade": "~1.11.0",
+    "jshint": "latest",
     "morgan": "~1.6.1",
     "pg-promise": "^3.2.3",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
     "supertest": "^2.0.0"
+  },
+  "scripts": {
+    "build": "npm install",
+    "build_clean": "npm run clean && npm run build",
+    "clean": "rm -rf node_modules/*",
+    "docco": "docco routes/index.js queries.js test/test.js",
+    "lint": "jshint **.js",
+    "start": "npm run build && node ./bin/www",
+    "test": "npm run build && mocha test/"
   }
 }

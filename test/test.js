@@ -5,7 +5,7 @@ var index = require('../routes/index');
 var queries = require('../queries');
 var request = require('supertest');
 
-// Tests for the Nova API endpoint
+// Nova API endpoint tests
 describe('Nova API Testing', function () {
   var server;
   var httpServer;
@@ -101,7 +101,7 @@ describe('Nova API Testing', function () {
         });
     });
 
-    // Test application to be denied
+    // 200 on valid API key, deny application from outside of Mexico
     it('responds with 200 and denies valid applications from other countries',
       function testValidSubmitRequest(done) {
       request(server)
@@ -120,7 +120,7 @@ describe('Nova API Testing', function () {
     });
   });
 
-  // Test GET inexistent endpoint
+  // GET inexistent endpoint
   describe('GET inexistent endpoint', function() {
     it('responds with 404', function test404(done) {
       request(server)

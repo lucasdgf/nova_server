@@ -11,6 +11,34 @@
   <div id="container">
     <div id="background"></div>
     
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="queries.html">
+                  queries.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
     <ul class="sections">
         
           <li id="title">
@@ -31,7 +59,6 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express'</span>);
-<span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"fs"</span>)
 <span class="hljs-keyword">var</span> router = express.Router();
 
 <span class="hljs-keyword">var</span> db = <span class="hljs-built_in">require</span>(<span class="hljs-string">'../queries'</span>);</pre></div></div>
@@ -45,23 +72,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>Serve Nova widget for testing</p>
+              <p>Serve Nova widget</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>router.get(<span class="hljs-string">'/api/widget'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">req, res, next</span>) </span>{
-  fs.readFile(<span class="hljs-string">'public/html/iframe-content.html'</span>, <span class="hljs-string">"binary"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">err, file</span>) </span>{
-    <span class="hljs-keyword">if</span>(err) {        
-      res.writeHead(<span class="hljs-number">500</span>, {<span class="hljs-string">"Content-Type"</span>: <span class="hljs-string">"text/plain"</span>});
-      res.write(err + <span class="hljs-string">"\n"</span>);
-      res.end();
-      <span class="hljs-keyword">return</span>;
-    }
-    res.writeHead(<span class="hljs-number">200</span>);
-    res.write(file, <span class="hljs-string">"binary"</span>);
-    res.end();
-  });
-});</pre></div></div>
+            <div class="content"><div class='highlight'><pre>router.get(<span class="hljs-string">'/api/widget'</span>, db.validateWidget);</pre></div></div>
             
         </li>
         
