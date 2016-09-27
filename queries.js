@@ -4,12 +4,12 @@ var options = {
   promiseLib: promise
 };
 
+// Load environment variables
+require('dotenv').config()
+
 // Make Postgres connection
 var pgp = require('pg-promise')(options);
-var connectionString = 'postgres://lsoocztuvlyeym:JvRePL5xVLGQ46P2GKprVO1KHQ' +
-  '@ec2-54-243-202-110.compute-1.amazonaws.com:5432/dcaktg7ij2eq5g?ssl=true';
-var db = pgp(connectionString);
-
+var db = pgp(process.env.DATABASE_URL);
 
 function validateWidget(req, res, next) {
   // Check for API key as URL parameter
@@ -25,7 +25,7 @@ function validateWidget(req, res, next) {
         res.render('widget', {api_key: req.query.api_key});
       })
       .catch(function (err) {
-        err = new Error('Invalid API key');
+        var err = new Error('Invalid API key');
         err.status = 403;
         next(err);
       });

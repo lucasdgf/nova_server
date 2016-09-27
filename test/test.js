@@ -1,5 +1,4 @@
 var assert = require('assert');
-var fs = require('fs');
 var http = require('http');
 var index = require('../routes/index');
 var queries = require('../queries');
